@@ -2,15 +2,15 @@ from enum import Enum
 
 class Mode(Enum):
     VACUUM = "VACUUM"
-    BATTERY = "BATTERY"
+    ACC = "ACC"  # accumulator
     HUNTER = "HUNTER"
 
 
-def detect_mode(price, vacuum_upper, battery_upper) -> Mode:
+def detect_mode(price, vacuum_upper, acc_upper) -> Mode:
     if price <= vacuum_upper:
         return Mode.VACUUM
-    elif price <= battery_upper:
-        return Mode.BATTERY
+    elif price <= acc_upper:
+        return Mode.ACC
     else:
         return Mode.HUNTER
 
@@ -27,10 +27,10 @@ if __name__ == "__main__":
     etp_price_spread = etp_price_ask - etp_price_bid
     print("etp_price_spread:", etp_price_spread)
 
-    battery_upper = vacuum_upper / (1 - profit_p)
-    print("battery_upper:", battery_upper)
+    acc_upper = vacuum_upper / (1 - profit_p)
+    print("acc_upper:", acc_upper)
 
-    mode = detect_mode(etp_price_ask, vacuum_upper, battery_upper)
+    mode = detect_mode(etp_price_ask, vacuum_upper, acc_upper)
     print("mode:", mode)
 
     limit_order = etp_price_ask * (1 + profit_p)

@@ -6,10 +6,10 @@ class Mode(Enum):
     HUNTER = "HUNTER"
 
 
-def detect_mode(price, vacuum_upper, acc_upper) -> Mode:
+def detect_mode(price, vacuum_upper, accumulator_upper) -> Mode:
     if price <= vacuum_upper:
         return Mode.VACUUM
-    elif price <= acc_upper:
+    elif price <= accumulator_upper:
         return Mode.ACCUMULATOR
     else:
         return Mode.HUNTER
@@ -27,10 +27,10 @@ if __name__ == "__main__":
     etp_price_spread = etp_price_ask - etp_price_bid
     print("etp_price_spread:", etp_price_spread)
 
-    acc_upper = vacuum_upper / (1 - profit_p)
-    print("acc_upper:", acc_upper)
+    accumulator_upper = vacuum_upper / (1 - profit_p)
+    print("accumulator_upper:", accumulator_upper)
 
-    mode = detect_mode(etp_price_ask, vacuum_upper, acc_upper)
+    mode = detect_mode(etp_price_ask, vacuum_upper, accumulator_upper)
     print("mode:", mode)
 
     limit_order = etp_price_ask * (1 + profit_p)

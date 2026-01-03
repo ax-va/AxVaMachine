@@ -5,6 +5,6 @@ class GB00BLD4ZM24(ShareLot):
     def __init__(self):
         super().__init__(
             isin="GB00BLD4ZM24",
-            share_name="ETP - CoinShares Physical Staked Ethereum",
+            share_name="CoinShares Physical Staked Ethereum",
             asset_name="ETH"
         )

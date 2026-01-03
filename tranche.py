@@ -1,37 +1,36 @@
 import datetime
 import math
 
-from lot import Lot
 from mode import Mode
 
 
 class Tranche:
     def __init__(
         self,
-        lot: Lot,
-        local_high: float,
-        profit_pct: float = 0.2,  # +20%
-        loss_pct: float = 0.4,  # -40%
-        vac_upper: float = None,
-        acc_upper: float = None,
+        lot: AssetEtpLot,
+        asset_local_high: float,
+        asset_profit_pct: float = 0.2,  # +20%
+        asset_loss_pct: float = 0.4,  # -40%
+        asset_vac_upper: float = None,
+        asset_acc_upper: float = None,
     ):
         self.lot = lot
-        self.local_high = local_high
-        self.profit_pct = profit_pct
-        self.loss_pct = loss_pct
-        self.vac_upper = (
-            vac_upper
-            if vac_upper is not None
-            else self.local_high * (1 - self.loss_pct)
+        self.asset_local_high = asset_local_high
+        self.asset_profit_pct = asset_profit_pct
+        self.asset_loss_pct = asset_loss_pct
+        self.asset_vac_upper = (
+            asset_vac_upper
+            if asset_vac_upper is not None
+            else self.asset_local_high * (1 - self.asset_loss_pct)
         )
         # Can switch to HUNTER if:
         # entry_price * (1 - p) >= vac_upper
         # <=> entry_price >= vac_upper / (1 - p)
-        # Next bind `profit_pct` and `loss_pct` via the geometric mean:
-        self.acc_upper = (
-            acc_upper
-            if acc_upper is not None
-            else self.vac_upper / math.sqrt((1 - self.profit_pct) * (1 - self.loss_pct))
+        # Next bind `asset_profit_pct` and `asset_loss_pct` via the geometric mean:
+        self.asset_acc_upper = (
+            asset_acc_upper
+            if asset_acc_upper is not None
+            else self.asset_vac_upper / math.sqrt((1 - self.asset_profit_pct) * (1 - self.asset_loss_pct))
         )
 
     @property
@@ -39,19 +38,19 @@ class Tranche:
         return self.lot.price_bought_dt.date()
 
     @property
-    def limit_order(self) -> float:
-        return self.lot.price_bought * (1 + self.profit_pct)
+    def asset_limit_order(self) -> float:
+        return self.lot.asset.price_bought * (1 + self.asset_profit_pct)
 
     @property
-    def stop_loss(self) -> float:
-        stop_loss_raw = self.lot.price_bought * (1 - self.loss_pct)
-        stop_loss = max(self.vac_upper, stop_loss_raw)
-        return stop_loss
+    def asset_stop_loss(self) -> float:
+        asset_stop_loss_raw = self.lot.asset.price_bought * (1 - self.asset_loss_pct)
+        asset_stop_loss = max(self.asset_vac_upper, asset_stop_loss_raw)
+        return asset_stop_loss
 
     def detect_mode(self, entry_price: float) -> Mode:
-        if entry_price <= self.vac_upper:
+        if entry_price <= self.asset_vac_upper:
             return Mode.VACUUM
-        elif entry_price <= self.acc_upper:
+        elif entry_price <= self.asset_acc_upper:
             return Mode.ACCUMULATOR
         else:
             return Mode.HUNTER

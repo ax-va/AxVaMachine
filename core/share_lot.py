@@ -7,11 +7,11 @@ from lot import Lot
 class ShareLot(Lot):
     def __init__(
         self,
-        isin: str,
+        share_isin: str,
         share_name: str = None,
         asset_name: str = None,
     ):
-        self.isin = isin
+        self.isin = share_isin
         self.name = share_name
         self.asset_lot = AssetLot(asset_name)
         super().__init__()

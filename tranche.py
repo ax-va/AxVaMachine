@@ -18,12 +18,9 @@ class Tranche:
         self.profit_pct = profit_pct
         self.loss_pct = loss_pct
         self.vac_upper = vac_upper if vac_upper is not None else self.local_high * (1 - self.loss_pct)
-        self.acc_upper = acc_upper \
-            if acc_upper is not None \
-            else self.vac_upper / (1 - self.profit_pct)
-            # entry_price * (1 - profit_pct) >= vac_upper
-            # <=>
-            # entry_price >= vac_upper / (1 - profit_pct)
+        # entry_price * (1 - profit_pct) >= vac_upper <=> entry_price >= vac_upper / (1 - profit_pct)
+        self.acc_upper = acc_upper if acc_upper is not None else self.vac_upper / (1 - self.profit_pct)
+
 
     @property
     def start_date(self) -> datetime.date:

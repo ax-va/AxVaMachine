@@ -24,8 +24,8 @@ class Tranche:
             else self.asset_local_high * (1 - self.asset_loss_pct)
         )
         # Can switch to HUNTER if:
-        # entry_price * (1 - p) >= vac_upper
-        # <=> entry_price >= vac_upper / (1 - p)
+        # entry_price * (1 - p) >= asset_vac_upper
+        # <=> entry_price >= asset_vac_upper / (1 - p)
         # Next bind `asset_profit_pct` and `asset_loss_pct` via the geometric mean:
         self.asset_acc_upper = (
             asset_acc_upper
@@ -47,10 +47,10 @@ class Tranche:
         asset_stop_loss = max(self.asset_vac_upper, asset_stop_loss_raw)
         return asset_stop_loss
 
-    def detect_mode(self, entry_price: float) -> Mode:
-        if entry_price <= self.asset_vac_upper:
+    def detect_mode(self, asset_price: float) -> Mode:
+        if asset_price <= self.asset_vac_upper:
             return Mode.VACUUM
-        elif entry_price <= self.asset_acc_upper:
+        elif asset_price <= self.asset_acc_upper:
             return Mode.ACCUMULATOR
         else:
             return Mode.HUNTER

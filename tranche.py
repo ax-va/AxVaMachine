@@ -30,9 +30,7 @@ class Tranche:
         self.acc_upper = (
             acc_upper
             if acc_upper is not None
-            else math.sqrt(
-                self.vac_upper / (1 / (1 - self.profit_pct) + 1 / (1 - self.loss_pct))
-            )
+            else self.vac_upper / math.sqrt((1 - self.profit_pct) * (1 - self.loss_pct))
         )
 
     @property

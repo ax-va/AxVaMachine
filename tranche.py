@@ -2,6 +2,7 @@ import datetime
 import math
 
 from lot import Lot
+from mode import Mode
 
 
 class Tranche:
@@ -46,3 +47,11 @@ class Tranche:
         stop_loss_raw = self.lot.price_bought * (1 - self.loss_pct)
         stop_loss = max(self.vac_upper, stop_loss_raw)
         return stop_loss
+
+    def detect_mode(self, entry_price: float) -> Mode:
+        if entry_price <= self.vac_upper:
+            return Mode.VACUUM
+        elif entry_price <= self.acc_upper:
+            return Mode.ACCUMULATOR
+        else:
+            return Mode.HUNTER

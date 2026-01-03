@@ -2,7 +2,7 @@ from enum import Enum
 
 class Mode(Enum):
     VACUUM = "VACUUM"
-    ACC = "ACC"  # accumulator
+    ACCUMULATOR = "ACCUMULATOR"
     HUNTER = "HUNTER"
 
 
@@ -10,7 +10,7 @@ def detect_mode(price, vacuum_upper, acc_upper) -> Mode:
     if price <= vacuum_upper:
         return Mode.VACUUM
     elif price <= acc_upper:
-        return Mode.ACC
+        return Mode.ACCUMULATOR
     else:
         return Mode.HUNTER
 

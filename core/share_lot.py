@@ -1,26 +1,40 @@
 import datetime
+from typing import Dict
 
 from core.asset_lot import AssetLot
-from core.instrument import Instrument
+from core.exchange import Exchange
+from core.instruments import Instrument, ShareInstrument
 from core.lot import Lot
 
 
 class ShareLot(Lot):
-    def __init__(
-        self,
-        share_isin: str,
-        share_name: str,
-        share_instrument: Instrument,
-        asset_name: str,
-    ):
-        self.isin: str = share_isin
-        self.name: str = share_name
-        self.instrument: Instrument = share_instrument
+    def __init__(self, instrument: ShareInstrument):
+        self.instrument: ShareInstrument = instrument
         self.units: float = 0  # amount
-        self.asset_lot = AssetLot(asset_name)
+        self.asset_lot = AssetLot(self.asset_name)
         self.entitlement_bought: float | None = None  # asset per share
         self.entitlement_sold: float | None = None  # asset per share
         super().__init__()
+
+    @property
+    def share_isin(self) -> str:
+        return self.instrument.isin
+
+    @property
+    def share_name(self) -> str:
+        return self.instrument.name
+
+    @property
+    def share_local_ids(self) -> Dict[str, str]:
+        return self.instrument.local_ids
+
+    @property
+    def share_tickers(self) -> Dict[Exchange, str]:
+        return self.instrument.tickers
+
+    @property
+    def asset_name(self) -> str:
+        return self.instrument.asset_name
 
     def buy(
         self,

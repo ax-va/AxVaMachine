@@ -13,20 +13,49 @@ class ShareLot(Lot):
     ):
         self.isin: str = share_isin
         self.name: str = share_name
+        self.amount: float = 0
         self.asset_lot = AssetLot(asset_name)
+        self.entitlement_bought: float | None = None
+        self.entitlement_sold: float | None = None
         super().__init__()
+
+    def buy(
+        self,
+        cash_in: float,
+        price: float,
+        price_dt: datetime.datetime,
+    ) -> None:
+        assert cash_in > 0
+        assert self.amount == 0
+
+        self.amount: float = cash_in / price
+        self.price_bought: float = price
+        self.price_bought_dt: datetime.datetime = price_dt
+
+    def sell(
+        self,
+        price: float,
+        price_dt: datetime.datetime,
+    ) -> float:
+        assert self.amount > 0
+
+        cash_out: float = self.amount * price
+        self.price_sold: float = price
+        self.price_sold_dt: datetime.datetime = price_dt
+        return cash_out
 
 
 def buy_share_lot(
     share_lot: ShareLot,
-    cash: float,
+    cash_in: float,
     share_price: float,
     entitlement: float,  # asset per share
     price_dt: datetime.datetime,
 ) -> None:
-    share_lot.buy(cash, share_price, price_dt)
+    share_lot.buy(cash_in, share_price, price_dt)
+    share_lot.entitlement_bought = entitlement
     implied_asset_price: float = share_price / entitlement
-    share_lot.asset_lot.buy(cash, implied_asset_price, price_dt)
+    share_lot.asset_lot.buy(share_lot.amount, entitlement, implied_asset_price, price_dt)
 
 
 def sell_share_lot(
@@ -35,7 +64,8 @@ def sell_share_lot(
     entitlement: float,  # asset per share
     price_dt: datetime.datetime,
 ) -> float:
-    cash: float = share_lot.sell(share_price, price_dt)
+    cash_out: float = share_lot.sell(share_price, price_dt)
+    share_lot.entitlement_sold = entitlement
     implied_asset_price: float = share_price / entitlement
-    share_lot.asset_lot.sell(implied_asset_price, price_dt)
-    return cash
+    share_lot.asset_lot.sell(share_lot.amount, entitlement, implied_asset_price, price_dt)
+    return cash_out

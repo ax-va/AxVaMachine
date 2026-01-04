@@ -15,6 +15,8 @@ class AssetLot(Lot):
         implied_price: float,
         price_dt: datetime.datetime,
     ) -> None:
+        assert share_amount > 0
+        assert entitlement > 0
         assert self.amount_bought == 0
 
         self.amount_bought: float = share_amount * entitlement
@@ -28,6 +30,8 @@ class AssetLot(Lot):
         implied_price: float,
         price_dt: datetime.datetime,
     ) -> None:
+        assert share_amount > 0
+        assert entitlement > 0
         assert self.amount_bought > 0
 
         self.amount_sold: float = share_amount * entitlement

@@ -26,6 +26,7 @@ class ShareLot(Lot):
         price_dt: datetime.datetime,
     ) -> None:
         assert cash_in > 0
+        assert price > 0
         assert self.amount == 0
 
         self.amount: float = cash_in / price

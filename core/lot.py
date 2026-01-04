@@ -1,9 +1,12 @@
 import datetime
+from typing import List
 
 
 class Lot:
     def __init__(self):
-        self.price_bought: float | None = None
-        self.price_bought_dt: datetime.datetime | None = None
-        self.price_sold: float | None = None
-        self.price_sold_dt: datetime.datetime | None = None
+        self.units_in: float = 0
+        self.price_in: float | None = None
+        self.price_in_dt: datetime.datetime | None = None
+        self.units_out_list: List[float] = []
+        self.price_out_list: List[float] = []
+        self.price_out_dt_list: List[datetime.datetime] = []

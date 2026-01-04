@@ -7,37 +7,35 @@ from core.lot import Lot
 class AssetLot(Lot):
     def __init__(self, asset: Asset):
         super().__init__()
-        self.asset: str = asset
-        self.amount_bought: float = 0.0
-        self.amount_sold: float | None = None
-
+        self.asset: Asset = asset
 
     def buy(
         self,
-        share_units: float,
-        entitlement: float,  # asset per share
-        price_implied: float,
-        price_dt: datetime.datetime,
+        share_units_in: float,  # share units to buy
+        entitlement_in: float,  # asset units per a share unit when buying
+        price_in_implied: float,
+        price_in_dt: datetime.datetime,
     ) -> None:
-        assert share_units > 0
-        assert entitlement > 0
-        assert self.amount_bought == 0
+        assert share_units_in > 0
+        assert entitlement_in > 0
+        assert price_in_implied > 0
+        assert self.units_in == 0
 
-        self.amount_bought: float = share_units * entitlement
-        self.price_bought: float = price_implied
-        self.price_bought_dt: datetime.datetime = price_dt
+        self.units_in: float = share_units_in * entitlement_in
+        self.price_in: float = price_in_implied
+        self.price_in_dt: datetime.datetime = price_in_dt
 
     def sell(
         self,
-        share_units: float,
-        entitlement: float,  # asset per share
-        price_implied: float,
-        price_dt: datetime.datetime,
+        share_units_out: float,  # share units to sell
+        entitlement_out: float,  # asset units per a share unit when selling
+        price_out_implied: float,
+        price_out_dt: datetime.datetime,
     ) -> None:
-        assert share_units > 0
-        assert entitlement > 0
-        assert self.amount_bought > 0
+        assert share_units_out > 0
+        assert entitlement_out > 0
+        assert self.units_in > 0
 
-        self.amount_sold: float = share_units * entitlement
-        self.price_sold: float = price_implied
-        self.price_sold_dt: datetime.datetime = price_dt
+        self.units_out_list.append(share_units_out * entitlement_out)
+        self.price_out_list.append(price_out_implied)
+        self.price_out_dt_list.append(price_out_dt)

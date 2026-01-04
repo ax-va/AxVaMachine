@@ -11,7 +11,7 @@ class Tranche:
         share_lot: ShareLot,
         asset_local_high: float,
         share_profit_pct: float = 0.2,  # +20%
-        asset_profit_pct: float = 0.2,
+        asset_profit_pct: float = None,
         asset_loss_pct: float = 0.4,  # -40%
         asset_vac_upper: float = None,
         asset_acc_upper: float = None,
@@ -19,7 +19,11 @@ class Tranche:
         self.share_lot: ShareLot = share_lot
         self.asset_local_high: float = asset_local_high
         self.share_profit_pct: float = share_profit_pct
-        self.asset_profit_pct: float = asset_profit_pct
+        self.asset_profit_pct: float = (
+            asset_profit_pct
+            if asset_profit_pct is not None
+            else self.share_profit_pct
+        )
         self.asset_loss_pct: float = asset_loss_pct
         self.asset_vac_upper: float = (
             asset_vac_upper

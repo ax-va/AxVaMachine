@@ -10,13 +10,15 @@ class Tranche:
         self,
         share_lot: ShareLot,
         asset_local_high: float,
-        asset_profit_pct: float = 0.2,  # +20%
+        share_profit_pct: float = 0.2,  # +20%
+        asset_profit_pct: float = 0.2,
         asset_loss_pct: float = 0.4,  # -40%
         asset_vac_upper: float = None,
         asset_acc_upper: float = None,
     ):
         self.share_lot: ShareLot = share_lot
         self.asset_local_high: float = asset_local_high
+        self.share_profit_pct: float = share_profit_pct
         self.asset_profit_pct: float = asset_profit_pct
         self.asset_loss_pct: float = asset_loss_pct
         self.asset_vac_upper: float = (
@@ -40,19 +42,11 @@ class Tranche:
         return self.share_lot.price_bought_dt.date()
 
     @property
-    def asset_limit_order(self) -> float:
-        return self.share_lot.asset_lot.price_bought * (1 + self.asset_profit_pct)
+    def share_limit_order(self) -> float:
+        return self.share_lot.price_bought * (1 + self.share_profit_pct)
 
     @property
     def asset_stop_loss(self) -> float:
         asset_stop_loss_raw: float = self.share_lot.asset_lot.price_bought * (1 - self.asset_loss_pct)
         asset_stop_loss: float = max(self.asset_vac_upper, asset_stop_loss_raw)
         return asset_stop_loss
-
-    def detect_mode(self, asset_price: float) -> Mode:
-        if asset_price <= self.asset_vac_upper:
-            return Mode.VACUUM
-        elif asset_price <= self.asset_acc_upper:
-            return Mode.ACCUMULATOR
-        else:
-            return Mode.HUNTER

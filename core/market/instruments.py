@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Dict
 
-from core.securities.asset import Asset
-from core.securities.exchange import Exchange
+from core.market.asset import Asset
+from core.market.exchange import Exchange
 
 
 @dataclass(frozen=True)

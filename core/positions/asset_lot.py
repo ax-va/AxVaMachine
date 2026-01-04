@@ -1,7 +1,7 @@
 import datetime
 
-from core.securities.asset import Asset
-from core.lots.base_lot import BaseLot
+from core.market.asset import Asset
+from core.positions.base_lot import BaseLot
 
 
 class AssetLot(BaseLot):

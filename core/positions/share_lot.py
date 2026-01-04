@@ -2,9 +2,9 @@ import datetime
 import math
 from typing import List
 
-from core.lots.asset_lot import AssetLot
-from core.securities.instruments import Share
-from core.lots.base_lot import BaseLot
+from core.positions.asset_lot import AssetLot
+from core.market.instruments import Share
+from core.positions.base_lot import BaseLot
 
 
 class ShareLot(BaseLot):

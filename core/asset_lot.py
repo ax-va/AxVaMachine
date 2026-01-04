@@ -21,7 +21,6 @@ class AssetLot(Lot):
         assert entitlement_in > 0
         assert price_in_implied > 0
 
-
         self.units_in: float = share_units_in * entitlement_in
         self.price_in: float = price_in_implied
         self.price_in_dt: datetime.datetime = price_in_dt

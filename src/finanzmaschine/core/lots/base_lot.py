@@ -22,9 +22,11 @@ class BaseLot:
 
     def record_in(
         self,
+        *,
         units_in: float,
         price_in: float,
         datetime_in: datetime.datetime,
+        **kwargs,
     ) -> None:
         assert self.units_in == 0
         assert units_in > 0
@@ -36,9 +38,11 @@ class BaseLot:
 
     def record_out(
         self,
+        *,
         units_out: float,
         price_out: float,
         datetime_out: datetime.datetime,
+        **kwargs,
     ) -> None:
         assert self.units_in > 0
         assert units_out > 0

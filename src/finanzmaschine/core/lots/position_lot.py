@@ -1,4 +1,5 @@
 import datetime
+from typing import override
 
 from finanzmaschine.core.lots.base_lot import BaseLot
 
@@ -18,11 +19,19 @@ class PositionLot(BaseLot):
     def is_closed(self) -> bool:
         return not self.is_open
 
+    @override
     def record_out(
         self,
+        *,
         units_out: float,
-        *args,
+        price_out: float,
+        datetime_out: datetime.datetime,
         **kwargs,
     ) -> None:
         assert units_out <= self.units_open
-        return super().record_out(units_out, *args, **kwargs)
+        return super().record_out(
+            units_out=units_out,
+            price_out=price_out,
+            datetime_out=datetime_out,
+            **kwargs,
+        )

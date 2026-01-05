@@ -41,9 +41,9 @@ class ShareLot(PositionLot):
         self,
         *,
         units_out: float,  # units sold
-        entitlement_out: float,  # asset units per a share unit when selling
         price_out: float,
         datetime_out: datetime.datetime,
+        entitlement_out: float,  # asset units per a share unit when selling
         **kwargs,
     ) -> float:
         assert entitlement_out > 0

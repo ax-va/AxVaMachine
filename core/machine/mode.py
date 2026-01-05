@@ -8,12 +8,12 @@ class Mode(Enum):
 
 def detect_mode(
     price: float,
-    vac_upper: float,
-    acc_upper: float,
+    vac_upper_bound: float,
+    acc_upper_bound: float,
 ) -> Mode:
-    if price <= vac_upper:
+    if price <= vac_upper_bound:
         return Mode.VACUUM
-    elif price <= acc_upper:
+    elif price <= acc_upper_bound:
         return Mode.ACCUMULATOR
     else:
         return Mode.HUNTER

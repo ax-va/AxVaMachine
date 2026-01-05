@@ -14,7 +14,7 @@ class AssetLot(BaseLot):
         share_units_in: float,  # share units to buy
         entitlement_in: float,  # asset units per a share unit when buying
         price_in_implied: float,
-        price_in_dt: datetime.datetime,
+        datetime_in: datetime.datetime,
     ) -> None:
         assert self.units_in == 0
         assert share_units_in > 0
@@ -23,14 +23,14 @@ class AssetLot(BaseLot):
 
         self.units_in: float = share_units_in * entitlement_in
         self.price_in: float = price_in_implied
-        self.price_in_dt: datetime.datetime = price_in_dt
+        self.datetime_in: datetime.datetime = datetime_in
 
     def sell(
         self,
         share_units_out: float,  # share units to sell
         entitlement_out: float,  # asset units per a share unit when selling
         price_out_implied: float,
-        price_out_dt: datetime.datetime,
+        datetime_out: datetime.datetime,
     ) -> None:
         assert self.units_in > 0
         assert share_units_out > 0
@@ -39,4 +39,4 @@ class AssetLot(BaseLot):
 
         self.units_out_list.append(share_units_out * entitlement_out)
         self.price_out_list.append(price_out_implied)
-        self.price_out_dt_list.append(price_out_dt)
+        self.datetime_out_list.append(datetime_out)

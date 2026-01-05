@@ -48,7 +48,7 @@ class Context:
 
     @property
     def start_date(self) -> datetime.date:
-        return self.share_lot.price_in_dt.date()
+        return self.share_lot.datetime_in.date()
 
     @property
     def share_limit_order_price(self) -> float:

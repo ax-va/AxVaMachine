@@ -11,6 +11,7 @@ class Context:
     The context defines the initial conditions, constraints, and
     derived thresholds used by the machine to decide how to proceed.
     """
+
     def __init__(
         self,
         share_lot: ShareLot,

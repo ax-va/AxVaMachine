@@ -2,6 +2,8 @@ from core.positions.base_lot import BaseLot
 
 
 class PositionLot(BaseLot):
+    """A lot that represents a position with an invariant unit balance."""
+
     @property
     def units_open(self) -> float:
         return self.units_in - self.units_out_total

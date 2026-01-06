@@ -1,100 +1,101 @@
-import datetime
-from typing import List, override
+import datetime as dt
+from typing import override
 
 from finanzmaschine.core.lots.asset_lot import AssetLot
 from finanzmaschine.core.lots.position_lot import PositionLot
+from finanzmaschine.core.lots.share_lot_record import ShareLotRecord
 from finanzmaschine.core.market.instruments import Share
 
 
-class ShareLot(PositionLot):
+class ShareLot(PositionLot[ShareLotRecord]):
+    record_cls = ShareLotRecord
+
     def __init__(self, share: Share):
         super().__init__()
         self.share: Share = share
         self.asset_lot = AssetLot(self.share.require_asset())
-        self.entitlement_in: float | None = None  # asset per share
-        self.entitlement_out_list: List[float] = []  # asset per share
 
     @override
     def record_in(
         self,
         *,
-        units_in: float,  # units bought
-        price_in: float,
-        datetime_in: datetime.datetime,
-        entitlement_in: float,  # asset units per a share unit when buying
+        units: float,  # units bought
+        price: float,
+        datetime: dt.datetime,
+        entitlement: float,  # asset units per a share unit when buying
         **kwargs,
     ) -> float:
-        assert entitlement_in > 0
+        assert entitlement > 0
 
-        self.entitlement_in: float = entitlement_in
         super().record_in(
-            units_in=units_in,
-            price_in=price_in,
-            datetime_in=datetime_in,
+            units=units,
+            price=price,
+            datetime=datetime,
+            entitlement=entitlement,
             **kwargs,
         )
-        cash_in: float = units_in * price_in
+        cash_in: float = units * price
         return cash_in
 
     @override
     def record_out(
         self,
         *,
-        units_out: float,  # units sold
-        price_out: float,
-        datetime_out: datetime.datetime,
-        entitlement_out: float,  # asset units per a share unit when selling
+        units: float,  # units sold
+        price: float,
+        datetime: dt.datetime,
+        entitlement: float,  # asset units per a share unit when selling
         **kwargs,
     ) -> float:
-        assert entitlement_out > 0
+        assert entitlement > 0
 
-        self.entitlement_out_list.append(entitlement_out)
         super().record_out(
-            units_out=units_out,
-            price_out=price_out,
-            datetime_out=datetime_out,
+            units=units,
+            price=price,
+            datetime=datetime,
+            entitlement=entitlement
         )
-        cash_out: float = units_out * price_out
+        cash_out: float = units * price
         return cash_out
 
 
 def record_share_lot_in(
     share_lot: ShareLot,
-    share_units_in: float,  # share units to buy
-    share_price_in: float,
-    datetime_in: datetime.datetime,
-    entitlement_in: float,  # asset units per a share unit when buying
+    share_units: float,  # share units to buy
+    share_price: float,
+    datetime: dt.datetime,
+    entitlement: float,  # asset units per a share unit when buying
 ) -> float:
     share_lot.asset_lot.record_in(
-        units_in=share_units_in * entitlement_in,  # implied units
-        price_in=share_price_in / entitlement_in,  # implied price
-        datetime_in=datetime_in,
+        units=share_units * entitlement,  # implied units
+        price=share_price / entitlement,  # implied price
+        datetime=datetime,
     )
     cash_in: float = share_lot.record_in(
-        units_in=share_units_in,
-        price_in=share_price_in,
-        datetime_in=datetime_in,
-        entitlement_in=entitlement_in,
+        units=share_units,
+        price=share_price,
+        datetime=datetime,
+        entitlement=entitlement,
     )
     return cash_in
 
 
 def record_share_lot_out(
     share_lot: ShareLot,
-    share_units_out: float,  # share units to sell
-    share_price_out: float,
-    datetime_out: datetime.datetime,
-    entitlement_out: float,  # asset units per a share unit when selling
+    share_units: float,  # share units to sell
+    share_price: float,
+    datetime: dt.datetime,
+    entitlement: float,  # asset units per a share unit when selling
 ) -> float:
     share_lot.asset_lot.record_out(
-        units_out=share_units_out * entitlement_out,  # implied units
-        price_out=share_price_out / entitlement_out,  # implied price
-        datetime_out=datetime_out,
+        units=share_units * entitlement,  # implied units
+        price=share_price / entitlement,  # implied price
+        datetime=datetime,
     )
     cash_out: float = share_lot.record_out(
-        units_out=share_units_out,
-        price_out=share_price_out,
-        datetime_out=datetime_out,
-        entitlement_out=entitlement_out,
+        units=share_units,
+        price=share_price,
+        datetime=datetime,
+        entitlement=entitlement,
     )
     return cash_out

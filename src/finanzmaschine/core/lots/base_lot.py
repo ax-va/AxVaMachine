@@ -1,49 +1,66 @@
-import datetime
+import datetime as dt
 import math
-from typing import List
+from typing import List, Type, TypeVar, Generic
+
+from finanzmaschine.core.lots.base_lot_record import BaseLotRecord
+
+TLotRecord = TypeVar("TLotRecord", bound=BaseLotRecord)
 
 
-class BaseLot:
+class BaseLot(Generic[TLotRecord]):
+    """
+    Generic lot managing immutable lot records.
+
+    Subclasses must define `record_cls`, a dataclass subclass of `BaseLotRecord`.
+    """
+
+    record_cls: Type[TLotRecord]
+
     def __init__(self):
-        self.units_in: float = 0
-        self.price_in: float | None = None
-        self.datetime_in: datetime.datetime | None = None
-        self.units_out_list: List[float] = []
-        self.price_out_list: List[float] = []
-        self.datetime_out_list: List[datetime.datetime] = []
+        if not hasattr(self, "record_cls"):
+            raise TypeError(f"{type(self).__name__} must define class attribute `record_cls`")
+
+        self.lot_record_in: TLotRecord | None = None
+        self.lot_records_out: List[TLotRecord] = []
 
     @property
     def units_out_total(self):
-        return math.fsum(self.units_out_list)
+        return math.fsum(lr.units for lr in self.lot_records_out)
 
     def record_in(
         self,
         *,
-        units_in: float,
-        price_in: float,
-        datetime_in: datetime.datetime,
+        units: float,
+        price: float,
+        datetime: dt.datetime,
         **kwargs,
     ) -> None:
-        assert self.units_in == 0
-        assert units_in > 0
-        assert price_in > 0
+        assert units > 0
+        assert price > 0
 
-        self.units_in: float = units_in
-        self.price_in: float = price_in
-        self.datetime_in: datetime.datetime = datetime_in
+        self.lot_record_in = self.record_cls(
+            units=units,
+            price=price,
+            datetime=datetime,
+            **kwargs,
+        )
 
     def record_out(
         self,
         *,
-        units_out: float,
-        price_out: float,
-        datetime_out: datetime.datetime,
+        units: float,
+        price: float,
+        datetime: dt.datetime,
         **kwargs,
     ) -> None:
-        assert self.units_in > 0
-        assert units_out > 0
-        assert price_out > 0
+        assert self.lot_record_in.units > 0
+        assert units > 0
+        assert price > 0
 
-        self.units_out_list.append(units_out)
-        self.price_out_list.append(price_out)
-        self.datetime_out_list.append(datetime_out)
+        lot_record_out = self.record_cls(
+            units=units,
+            price=price,
+            dt=dt,
+            **kwargs,
+        )
+        self.lot_records_out.append(lot_record_out)

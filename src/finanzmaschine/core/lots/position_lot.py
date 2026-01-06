@@ -1,15 +1,18 @@
-import datetime
+import datetime as dt
 from typing import override
 
-from finanzmaschine.core.lots.base_lot import BaseLot
+from finanzmaschine.core.lots.base_lot import BaseLot, TLotRecord
+from finanzmaschine.core.lots.base_lot_record import BaseLotRecord
 
 
-class PositionLot(BaseLot):
+class PositionLot(BaseLot[TLotRecord]):
     """A lot that represents a position with an invariant unit balance."""
+
+    record_cls = BaseLotRecord
 
     @property
     def units_open(self) -> float:
-        return self.units_in - self.units_out_total
+        return self.lot_record_in.units - self.units_out_total
 
     @property
     def is_open(self) -> bool:
@@ -23,15 +26,15 @@ class PositionLot(BaseLot):
     def record_out(
         self,
         *,
-        units_out: float,
-        price_out: float,
-        datetime_out: datetime.datetime,
+        units: float,
+        price: float,
+        datetime: dt.datetime,
         **kwargs,
     ) -> None:
-        assert units_out <= self.units_open
+        assert units <= self.units_open
         return super().record_out(
-            units_out=units_out,
-            price_out=price_out,
-            datetime_out=datetime_out,
+            units=units,
+            price=price,
+            datetime=datetime,
             **kwargs,
         )

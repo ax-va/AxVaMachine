@@ -43,10 +43,6 @@ class ShareLotContext:
         )
 
     @property
-    def date_in(self) -> datetime.date:
-        return self.share_lot.datetime_in.date()
-
-    @property
     def asset_limit_order_price(self) -> float:
         return self.share_lot.asset_lot.price_in * (1 + self.asset_profit_pct)
 
@@ -55,3 +51,7 @@ class ShareLotContext:
         asset_stop_loss_raw: float = self.share_lot.asset_lot.price_in * (1 - self.asset_loss_pct)
         asset_stop_loss: float = max(self.asset_vac_upper_bound, asset_stop_loss_raw)
         return asset_stop_loss
+
+    @property
+    def date_in(self) -> datetime.date:
+        return self.share_lot.datetime_in.date()

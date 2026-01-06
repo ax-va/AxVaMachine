@@ -124,4 +124,4 @@ For commercial licensing, production deployment, or partnership inquiries, pleas
 
 https://github.com/ax-va
 
-© 2026 ax-va. All rights reserved.
+© 2026 ax-va - Finanzmaschine. All rights reserved.

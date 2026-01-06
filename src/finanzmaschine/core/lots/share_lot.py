@@ -13,6 +13,8 @@ class ShareLot(NominalLot[ShareLotRecord]):
 
     Units are invariant in share terms.
     Each share unit carries an entitlement to an underlying asset.
+
+    Examples of such instruments include ETPs such as ETFs, ETNs, and ETCs.
     """
 
     record_cls = ShareLotRecord

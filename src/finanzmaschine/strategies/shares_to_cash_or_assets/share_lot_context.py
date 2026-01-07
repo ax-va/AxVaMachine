@@ -37,8 +37,8 @@ class ShareLotContext:
             else self.asset_local_high * (1 - self.asset_loss_pct)
         )
         if self.asset_profit_pct < 1:
-            # ACCUMULATOR zone upper bound:
-            # Can switch to HUNTER if
+            # ACCUMULATOR zone upper bound for asset price:
+            # Switch to HUNTER if
             # price * (1 - p) >= vac_upper_bound <=> price >= vac_upper_bound / (1 - p) =: acc_upper_bound.
             # Next bind `profit_pct` and `loss_pct` via the geometric mean:
             self.asset_acc_upper_bound: float = (
@@ -49,7 +49,7 @@ class ShareLotContext:
                 )
             )
         else:
-            # no ACCUMULATOR zone
+            # no ACCUMULATOR zone for asset price
             self.asset_acc_upper_bound: float = self.asset_vac_upper_bound
 
     @property

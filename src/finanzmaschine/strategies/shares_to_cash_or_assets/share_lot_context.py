@@ -67,5 +67,5 @@ class ShareLotContext:
         return self.share_lot.lot_record_in.datetime.date()
 
     # @property
-    # def is_veteran(self):
-    #     return date.today() >= self.date_in + relativedelta(years=HOLDING_YEARS)
+    # def is_tax_free(self):
+    #     return date.today() >= self.date_in + relativedelta(years=1)

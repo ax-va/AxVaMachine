@@ -7,7 +7,7 @@ PRIVATE_DIR = PROJECT_ROOT / SETTINGS.paths.private
 
 df = (
     pl.read_csv(
-        PRIVATE_DIR / "etp.csv",
+        PRIVATE_DIR / "etp_ton.csv",
         try_parse_dates=True,
     ).sort("datetime")
 )

@@ -1,13 +1,11 @@
-import datetime as dt
-from typing import override
+from datetime import datetime
 
 from finanzmaschine.core.lots.asset_lot import AssetLot
 from finanzmaschine.core.lots.nominal_lot import NominalLot
-from finanzmaschine.core.lots.share_lot_record import ShareLotRecord
 from finanzmaschine.core.market.instruments import Share
 
 
-class ShareLot(NominalLot[ShareLotRecord]):
+class ShareLot(NominalLot):
     """
     A nominal lot corresponding to a share-based instrument.
 
@@ -17,94 +15,68 @@ class ShareLot(NominalLot[ShareLotRecord]):
     Examples of such instruments include ETPs such as ETFs, ETNs, and ETCs.
     """
 
-    record_cls = ShareLotRecord
-
     def __init__(self, share: Share):
         super().__init__()
         self.share: Share = share
         self.asset_lot = AssetLot(self.share.require_asset())
 
-    @override
-    def record_in(
-        self,
-        *,
-        units: float,  # share units to buy
-        price: float,
-        datetime: dt.datetime,
-        entitlement: float | None,  # asset units per a share unit when buying
-        **kwargs,
-    ) -> float:
-        assert entitlement > 0
 
-        super().record_in(
-            units=units,
-            price=price,
-            datetime=datetime,
-            entitlement=entitlement,
-            **kwargs,
-        )
-        cash_in: float = units * price
-        return cash_in
-
-    @override
-    def record_out(
-        self,
-        *,
-        units: float,  # share units to sell
-        price: float,
-        datetime: dt.datetime,
-        entitlement: float | None,  # asset units per a share unit when selling
-        **kwargs,
-    ) -> float:
-        assert entitlement > 0
-
-        super().record_out(
-            units=units,
-            price=price,
-            datetime=datetime,
-            entitlement=entitlement
-        )
-        cash_out: float = units * price
-        return cash_out
-
-
-def record_share_lot_in(
+def buy_share_lot(
     share_lot: ShareLot,
     share_units: float,  # share units to buy
     share_price: float,
-    datetime: dt.datetime,
-    entitlement: float,  # asset units per a share unit when buying
+    fee: float,
+    dt: datetime,
+    entitlement: float | None = None,  # asset units per a share unit when buying
 ) -> float:
-    share_lot.asset_lot.record_in(
-        units=share_units * entitlement,  # implied units
-        price=share_price / entitlement,  # implied price
-        datetime=datetime,
-    )
-    cash_in: float = share_lot.record_in(
+    if entitlement is not None:
+        asset_units =share_units * entitlement
+        asset_price = share_price / entitlement
+        share_lot.asset_lot.record_in(
+            units=asset_units,  # implied units
+            price=asset_price,  # implied price
+            fee=fee,
+            dt=dt,
+        )
+
+    share_lot.record_in(
         units=share_units,
         price=share_price,
-        datetime=datetime,
-        entitlement=entitlement,
+        fee=fee,
+        dt=dt,
     )
-    return cash_in
+
+    cash_out = -(share_units * share_price + fee)
+    return cash_out
 
 
-def record_share_lot_out(
+def sell_share_lot_part(
     share_lot: ShareLot,
     share_units: float,  # share units to sell
     share_price: float,
-    datetime: dt.datetime,
-    entitlement: float,  # asset units per a share unit when selling
+    fee: float,
+    dt: datetime,
+    entitlement: float | None = None,  # asset units per a share unit when selling
 ) -> float:
-    share_lot.asset_lot.record_out(
-        units=share_units * entitlement,  # implied units
-        price=share_price / entitlement,  # implied price
-        datetime=datetime,
-    )
-    cash_out: float = share_lot.record_out(
+    if (
+        entitlement is not None and
+        share_lot.asset_lot.lot_record_in is not None
+    ):
+        asset_units =share_units * entitlement
+        asset_price = share_price / entitlement
+        share_lot.asset_lot.record_out(
+            units=asset_units,  # implied units
+            price=asset_price,  # implied price
+            fee=fee,
+            dt=dt,
+        )
+
+    share_lot.record_out(
         units=share_units,
         price=share_price,
-        datetime=datetime,
-        entitlement=entitlement,
+        fee=fee,
+        dt=dt,
     )
-    return cash_out
+
+    cash_in = share_units * share_price - fee
+    return cash_in

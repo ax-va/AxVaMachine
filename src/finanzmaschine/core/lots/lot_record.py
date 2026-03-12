@@ -1,10 +1,10 @@
-import datetime as dt
-
 from dataclasses import dataclass
+from datetime import datetime
 
 
 @dataclass(frozen=True)
-class BaseLotRecord:
+class LotRecord:
     units: float
     price: float
-    datetime: dt.datetime
+    fee: float
+    dt: datetime

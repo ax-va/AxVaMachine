@@ -1,13 +1,10 @@
 import polars as pl
 
-from finanzmaschine import PROJECT_ROOT
-from finanzmaschine.config import SETTINGS
-
-PRIVATE_DIR = PROJECT_ROOT / SETTINGS.paths.private
+from finanzmaschine.config import PRIVATE_DATA_DIR
 
 df = (
     pl.read_csv(
-        PRIVATE_DIR / "crypto_etp.csv",
+        PRIVATE_DATA_DIR / "crypto_etp.csv",
         try_parse_dates=True,
     ).sort("datetime")
 )

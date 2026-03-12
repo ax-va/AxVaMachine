@@ -1,18 +1,15 @@
-import datetime as dt
+from datetime import datetime
 from typing import override
 
-from finanzmaschine.core.lots.base_lot import BaseLot, TLotRecord
-from finanzmaschine.core.lots.base_lot_record import BaseLotRecord
+from finanzmaschine.core.lots.base_lot import BaseLot
 
 
-class NominalLot(BaseLot[TLotRecord]):
+class NominalLot(BaseLot):
     """
     A lot representing a lot with an invariant unit balance.
 
     The number of units is invariant: units_open = units_in - units_out_total.
     """
-
-    record_cls = BaseLotRecord
 
     @property
     def units_open(self) -> float:
@@ -32,13 +29,14 @@ class NominalLot(BaseLot[TLotRecord]):
         *,
         units: float,
         price: float,
-        datetime: dt.datetime,
-        **kwargs,
+        fee: float,
+        dt: datetime,
     ) -> None:
         assert units <= self.units_open
+
         return super().record_out(
             units=units,
             price=price,
-            datetime=datetime,
-            **kwargs,
+            fee=fee,
+            dt=dt,
         )

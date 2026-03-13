@@ -1,8 +1,8 @@
 from finanzmaschine.catalog import registry
 from finanzmaschine.catalog.asset_enum import Asset
-from finanzmaschine.core.market.etp import Etp
+from finanzmaschine.core.market.share import Share
 
-COINSHARES_PHYSICAL_STAKED_ETHEREUM = Etp(
+COINSHARES_PHYSICAL_STAKED_ETHEREUM = Share(
     isin="GB00BLD4ZM24",
     name="CoinShares Physical Staked Ethereum",
     asset=Asset.ETH,

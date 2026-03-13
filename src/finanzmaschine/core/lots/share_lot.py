@@ -30,11 +30,11 @@ def open_share_lot(
     entitlement: float | None = None,  # asset units per a share unit when buying
 ) -> float:
     if entitlement is not None:
-        asset_units = units * entitlement
-        asset_price = price / entitlement
+        asset_units = units * entitlement  # implied units
+        asset_price = price / entitlement  # implied price
         lot.asset_lot.record_in(
-            units=asset_units,  # implied units
-            price=asset_price,  # implied price
+            units=asset_units,
+            price=asset_price,
             fee=fee,
             dt=dt,
         )
@@ -62,11 +62,11 @@ def close_share_lot_part(
         entitlement is not None and
         lot.asset_lot.lot_record_in is not None
     ):
-        asset_units = units * entitlement
-        asset_price = price / entitlement
+        asset_units = units * entitlement  # implied units
+        asset_price = price / entitlement  # implied price
         lot.asset_lot.record_out(
-            units=asset_units,  # implied units
-            price=asset_price,  # implied price
+            units=asset_units,
+            price=asset_price,
             fee=fee,
             dt=dt,
         )

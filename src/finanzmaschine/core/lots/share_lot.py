@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from finanzmaschine.core.lots.asset_lot import AssetLot
+from finanzmaschine.core.lots.lot_state import LotState
 from finanzmaschine.core.lots.nominal_lot import NominalLot
 from finanzmaschine.core.market.instruments import Share
 
@@ -46,7 +47,7 @@ def open_share_lot(
         dt=dt,
     )
 
-    cash_out = -(units * price + fee)
+    cash_out: float = -(units * price + fee)
     return cash_out
 
 
@@ -60,7 +61,7 @@ def close_share_lot_part(
 ) -> float:
     if (
         entitlement is not None and
-        lot.asset_lot.lot_record_in is not None
+        lot.asset_lot.state == LotState.OPEN
     ):
         asset_units = units * entitlement  # implied units
         asset_price = price / entitlement  # implied price
@@ -78,5 +79,8 @@ def close_share_lot_part(
         dt=dt,
     )
 
-    cash_in = units * price - fee
+    if lot.state == LotState.CLOSED:
+        lot.asset_lot.state = LotState.CLOSED
+
+    cash_in: float = units * price - fee
     return cash_in

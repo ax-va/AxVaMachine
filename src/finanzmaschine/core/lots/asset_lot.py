@@ -1,9 +1,8 @@
 from finanzmaschine.core.lots.base_lot import BaseLot
-from finanzmaschine.core.lots.lot_record import BaseLotRecord
 from finanzmaschine.core.market.asset import Asset
 
 
-class AssetLot(BaseLot[BaseLotRecord]):
+class AssetLot(BaseLot):
     """
     A lot representing exposure to an underlying asset.
 
@@ -15,8 +14,6 @@ class AssetLot(BaseLot[BaseLotRecord]):
     where entitlement is a time-dependent mapping that determines
     how many asset units are represented by a single share unit.
     """
-
-    record_cls = BaseLotRecord
 
     def __init__(self, asset: Asset):
         super().__init__()

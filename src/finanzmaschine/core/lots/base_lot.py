@@ -1,8 +1,9 @@
 import math
 from datetime import datetime
-from typing import List, Type, TypeVar, Generic
+from typing import Tuple
 
 from finanzmaschine.core.lots.lot_record import LotRecord
+from finanzmaschine.core.lots.lot_state import LotState
 
 
 class BaseLot:
@@ -11,12 +12,14 @@ class BaseLot:
     """
 
     def __init__(self):
+        self.state = LotState.NEW
         self.lot_record_in: LotRecord | None = None
-        self.lot_records_out: List[LotRecord] = []
+        self.lot_records_out: Tuple[LotRecord, ...] = ()
+        self._units_out_total: float = 0.0
 
     @property
     def units_out_total(self) -> float:
-        return math.fsum(lr.units for lr in self.lot_records_out)
+        return self._units_out_total
 
     def record_in(
         self,
@@ -26,6 +29,7 @@ class BaseLot:
         fee: float,
         dt: datetime,
     ) -> None:
+        assert self.state == LotState.NEW, "Lot already opened"
         assert units > 0
         assert price > 0
         assert fee >= 0
@@ -45,9 +49,11 @@ class BaseLot:
         fee: float,
         dt: datetime,
     ) -> None:
+        assert self.state == LotState.OPEN, "Lot not open"
         assert self.lot_record_in.units > 0
         assert units > 0
         assert price > 0
+        assert fee >= 0
 
         lot_record_out = LotRecord(
             units=units,
@@ -55,4 +61,5 @@ class BaseLot:
             fee=fee,
             dt=dt,
         )
-        self.lot_records_out.append(lot_record_out)
+        self.lot_records_out = *self.lot_records_out, lot_record_out
+        self._units_out_total += units

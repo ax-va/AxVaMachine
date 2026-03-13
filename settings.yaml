@@ -1,2 +1,3 @@
 paths:
   private_data: "private_data"
+  public_data: "public_data"

@@ -8,6 +8,7 @@ from finanzmaschine import SETTINGS_PATH, PROJECT_ROOT
 @dataclass
 class Paths:
     private_data: Path
+    public_data: Path
 
 
 @dataclass
@@ -23,9 +24,13 @@ def load_settings(settings_path: str | Path = None) -> Settings:
         data = yaml.safe_load(f)
 
     return Settings(
-        paths=Paths(private_data=Path(data["paths"]["private_data"])),
+        paths=Paths(
+            private_data=Path(data["paths"]["private_data"]),
+            public_data=Path(data["paths"]["public_data"]),
+        ),
     )
 
 
 SETTINGS = load_settings()
 PRIVATE_DATA_DIR = PROJECT_ROOT / SETTINGS.paths.private_data
+PUBLIC_DATA_DIR = PROJECT_ROOT / SETTINGS.paths.public_data

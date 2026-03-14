@@ -47,7 +47,7 @@ def open_share_lot(
         dt=dt,
     )
 
-    cash_out: float = -(units * price + fee)
+    cash_out: float = units * price + fee
     return cash_out
 
 

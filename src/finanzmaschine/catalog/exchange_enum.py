@@ -3,3 +3,4 @@ from enum import Enum
 
 class Exchange(Enum):
     EIX = "EIX"
+    GETTEX = "gettex"

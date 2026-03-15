@@ -48,7 +48,7 @@ class BaseLot:
 
         return lot
 
-    def close_part(
+    def close_units(
         self,
         *,
         units: float,

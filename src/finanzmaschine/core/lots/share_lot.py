@@ -22,7 +22,7 @@ class ShareLot(NominalLot):
         self.asset_lot: AssetLot | None = None
 
     @override
-    def close_part(
+    def close_units(
         self,
         *,
         units: float,
@@ -34,7 +34,7 @@ class ShareLot(NominalLot):
         entitlement: float | None = None,
     ) -> None:
 
-        super().close_part(
+        super().close_units(
             units=units,
             price=price,
             price_currency=price_currency,
@@ -53,7 +53,7 @@ class ShareLot(NominalLot):
 
         assert self.asset_lot is not None
 
-        self.asset_lot.close_part(
+        self.asset_lot.close_units(
             units=asset_units,
             price=asset_price,
             price_currency=price_currency,

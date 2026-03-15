@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import override
 
 from finanzmaschine.core.lots.asset_lot import AssetLot
@@ -26,9 +27,9 @@ class ShareLot(NominalLot):
         self,
         *,
         units: float,
-        price: float,
+        price: Decimal,
         price_currency: Currency,
-        fee: float,
+        fee: Decimal,
         fee_currency: Currency,
         dt: datetime,
         entitlement: float | None = None,
@@ -48,7 +49,7 @@ class ShareLot(NominalLot):
         # implied units
         asset_units = units * entitlement
         # implied price
-        asset_price = price / entitlement
+        asset_price = price / Decimal(str(entitlement))
 
         assert self.asset_lot is not None
 
@@ -82,7 +83,7 @@ class ShareLot(NominalLot):
         # implied units
         asset_units = self.lot_record_in.units * entitlement
         # implied price
-        asset_price = self.lot_record_in.price / entitlement
+        asset_price = self.lot_record_in.price / Decimal(str(entitlement))
 
         self.asset_lot = AssetLot.open(
             units=asset_units,

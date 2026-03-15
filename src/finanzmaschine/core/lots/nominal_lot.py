@@ -1,7 +1,9 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import override
 
 from finanzmaschine.core.lots.base_lot import BaseLot
+from finanzmaschine.utils.float_helper import is_zero
 
 
 class NominalLot(BaseLot):
@@ -18,18 +20,18 @@ class NominalLot(BaseLot):
 
     @property
     def is_open(self) -> bool:
-        return self.units_open > 0
+        return not self.is_closed
 
     @property
     def is_closed(self) -> bool:
-        return self.units_open == 0
+        return is_zero(self.units_open)
 
     @override
     def _validate_record_out(
         self,
         units: float,
-        price: float,
-        fee: float,
+        price: Decimal,
+        fee: Decimal,
         dt: datetime,
     ) -> None:
         super()._validate_record_out(units, price, fee, dt)

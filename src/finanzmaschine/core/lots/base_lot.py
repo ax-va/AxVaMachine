@@ -1,10 +1,10 @@
 from datetime import datetime
+from decimal import Decimal
 from math import fsum
 from typing import Tuple, Type, TypeVar, Any
 
 from finanzmaschine.core.lots.currency_enum import Currency
 from finanzmaschine.core.lots.lot_record import LotRecord
-
 
 T = TypeVar("T", bound="BaseLot")
 
@@ -35,9 +35,9 @@ class BaseLot:
         cls: Type[T],
         *,
         units: float,
-        price: float,
+        price: Decimal,
         price_currency: Currency,
-        fee: float,
+        fee: Decimal,
         fee_currency: Currency,
         dt: datetime,
         **kwargs: Any,
@@ -59,9 +59,9 @@ class BaseLot:
         self,
         *,
         units: float,
-        price: float,
+        price: Decimal,
         price_currency: Currency,
-        fee: float,
+        fee: Decimal,
         fee_currency: Currency,
         dt: datetime,
         **kwargs: Any,
@@ -78,9 +78,9 @@ class BaseLot:
     def _record_in(
         self,
         units: float,
-        price: float,
+        price: Decimal,
         price_currency: Currency,
-        fee: float,
+        fee: Decimal,
         fee_currency: Currency,
         dt: datetime,
     ) -> None:
@@ -93,9 +93,9 @@ class BaseLot:
     def _record_out(
         self,
         units: float,
-        price: float,
+        price: Decimal,
         price_currency: Currency,
-        fee: float,
+        fee: Decimal,
         fee_currency: Currency,
         dt: datetime,
     ) -> None:
@@ -107,8 +107,8 @@ class BaseLot:
     @staticmethod
     def _validate_record(
         units: float,
-        price: float,
-        fee: float,
+        price: Decimal,
+        fee: Decimal,
     ) -> None:
         assert units > 0
         assert price > 0
@@ -117,8 +117,8 @@ class BaseLot:
     def _validate_record_out(
         self,
         units: float,
-        price: float,
-        fee: float,
+        price: Decimal,
+        fee: Decimal,
         dt: datetime,
     ) -> None:
         self._validate_record(units, price, fee)

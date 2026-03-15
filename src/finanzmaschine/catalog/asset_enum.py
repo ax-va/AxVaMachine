@@ -2,7 +2,10 @@ from enum import Enum
 
 
 class Asset(Enum):
+    BTC = "BTC"
     ETH = "ETH"
+    NEAR = "NEAR"
+    SOL = "SOL"
     TON = "TON"
 
 

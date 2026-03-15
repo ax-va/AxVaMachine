@@ -9,7 +9,7 @@ class AssetLot(BaseLot):
     Unit balance is not invariant and may change over time due to
     entitlement adjustments, fees, or asset-specific mechanics.
 
-    Units may become negative.
+    Asset units may become negative.
     This does NOT represent a short position, but rather
     a mismatch between share exposure and implied asset exposure.
 

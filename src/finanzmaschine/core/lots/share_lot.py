@@ -64,7 +64,7 @@ class ShareLot(NominalLot):
 
     @override
     @classmethod
-    def _ctor_kwargs(
+    def _constructor_kwargs(
         cls,
         kwargs: dict,
     ) -> dict:

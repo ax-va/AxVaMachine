@@ -1,3 +1,5 @@
+from typing import override
+
 from finanzmaschine.core.lots.base_lot import BaseLot
 from finanzmaschine.catalog.asset_enum import Asset
 
@@ -25,3 +27,11 @@ class AssetLot(BaseLot):
     def __init__(self, asset: Asset):
         super().__init__()
         self.asset: Asset = asset
+
+    @override
+    @classmethod
+    def _constructor_kwargs(
+        cls,
+        kwargs: dict,
+    ) -> dict:
+        return {"asset": kwargs["asset"]}

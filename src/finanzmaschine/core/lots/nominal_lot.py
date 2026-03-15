@@ -8,12 +8,13 @@ class NominalLot(BaseLot):
     """
     A lot representing a lot with an invariant unit balance.
 
-    The number of units is invariant: units_open = units_in - units_out_total.
+    The number of units is invariant:
+    units_open = units_in - units_closed.
     """
 
     @property
     def units_open(self) -> float:
-        return self.lot_record_in.units - self.units_out_total
+        return self.lot_record_in.units - self.units_closed
 
     @property
     def is_open(self) -> bool:

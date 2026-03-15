@@ -1,4 +1,5 @@
 from datetime import datetime
+from math import fsum
 from typing import Tuple, Type, TypeVar, Any
 
 from finanzmaschine.core.lots.currency_enum import Currency
@@ -15,11 +16,11 @@ class BaseLot:
     def __init__(self, **kwargs):
         self.lot_record_in: LotRecord | None = None
         self.lot_records_out: Tuple[LotRecord, ...] = ()
-        self._units_out_total: float = 0.0
+        self._units_closed: float = 0.0
 
     @property
-    def units_out_total(self) -> float:
-        return self._units_out_total
+    def units_closed(self) -> float:
+        return fsum(r.units for r in self.lot_records_out)
 
     @classmethod
     def open(
@@ -34,15 +35,14 @@ class BaseLot:
         **kwargs: Any,
     ) -> T:
 
-        # constructor kwargs
-        ctor_kwargs = cls._ctor_kwargs(kwargs)
-        lot = cls(**ctor_kwargs)
+        constructor_kwargs = cls._constructor_kwargs(kwargs)
+        lot = cls(**constructor_kwargs)
 
         # noinspection PyProtectedMember
         lot._record_in(units, price, price_currency, fee, fee_currency, dt)
 
         # remaining kwargs
-        post_kwargs = {k: v for k, v in kwargs.items() if k not in ctor_kwargs}
+        post_kwargs = {k: v for k, v in kwargs.items() if k not in constructor_kwargs}
         # noinspection PyProtectedMember
         lot._post_open(**post_kwargs)
 
@@ -62,7 +62,7 @@ class BaseLot:
         self._record_out(units, price, price_currency, fee, fee_currency, dt)
 
     @classmethod
-    def _ctor_kwargs(cls, kwargs: dict) -> dict:
+    def _constructor_kwargs(cls, kwargs: dict) -> dict:
         return {}
 
     def _post_open(self, **kwargs) -> None:
@@ -94,7 +94,6 @@ class BaseLot:
 
         lot_record_out = LotRecord(units, price, price_currency, fee, fee_currency, dt)
         self.lot_records_out = *self.lot_records_out, lot_record_out
-        self._units_out_total += units
 
     @staticmethod
     def _validate_record(

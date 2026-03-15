@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import override
 
 from finanzmaschine.core.lots.base_lot import BaseLot
-from finanzmaschine.core.lots.lot_state import LotState
 
 
 class NominalLot(BaseLot):
@@ -18,29 +17,19 @@ class NominalLot(BaseLot):
 
     @property
     def is_open(self) -> bool:
-        return self.state == LotState.OPEN
+        return self.units_open > 0
 
     @property
     def is_closed(self) -> bool:
-        return self.state == LotState.CLOSED
+        return self.units_open == 0
 
     @override
-    def record_out(
+    def _validate_record_out(
         self,
-        *,
         units: float,
         price: float,
         fee: float,
         dt: datetime,
     ) -> None:
+        super()._validate_record_out(units, price, fee, dt)
         assert units <= self.units_open
-
-        super().record_out(
-            units=units,
-            price=price,
-            fee=fee,
-            dt=dt,
-        )
-
-        if self.units_open == 0:
-            self.state = LotState.CLOSED

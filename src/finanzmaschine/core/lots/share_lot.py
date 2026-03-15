@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import override
 
 from finanzmaschine.core.lots.asset_lot import AssetLot
-from finanzmaschine.core.lots.lot_state import LotState
+from finanzmaschine.core.lots.currency_enum import Currency
 from finanzmaschine.core.lots.nominal_lot import NominalLot
 from finanzmaschine.core.market.share import Share
 
@@ -18,66 +19,80 @@ class ShareLot(NominalLot):
 
     def __init__(self, share: Share):
         super().__init__()
+        share.require_asset()
         self.share: Share = share
-        self.asset_lot = AssetLot(self.share.require_asset())
+        self.asset_lot: AssetLot | None = None
 
+    @override
+    def close_part(
+        self,
+        *,
+        units: float,
+        price: float,
+        price_currency: Currency,
+        fee: float,
+        fee_currency: Currency,
+        dt: datetime,
+        entitlement: float | None = None,
+    ) -> None:
 
-def open_share_lot(
-    lot: ShareLot,
-    units: float,  # share units to open
-    price: float,
-    fee: float,
-    dt: datetime,
-    entitlement: float | None = None,  # asset units per a share unit when buying
-) -> float:
-    if entitlement is not None:
-        asset_units = units * entitlement  # implied units
-        asset_price = price / entitlement  # implied price
-        lot.asset_lot.record_in(
-            units=asset_units,
-            price=asset_price,
+        super().close_part(
+            units=units,
+            price=price,
+            price_currency=price_currency,
             fee=fee,
+            fee_currency=fee_currency,
             dt=dt,
         )
 
-    lot.record_in(
-        units=units,
-        price=price,
-        fee=fee,
-        dt=dt,
-    )
+        if entitlement is None:
+            return
 
-    cash_out: float = units * price + fee
-    return cash_out
+        # implied units
+        asset_units = units * entitlement
+        # implied price
+        asset_price = price / entitlement
 
+        assert self.asset_lot is not None
 
-def close_share_lot_part(
-    lot: ShareLot,
-    units: float,  # share units to close
-    price: float,
-    fee: float,
-    dt: datetime,
-    entitlement: float | None = None,  # asset units per a share unit when selling
-) -> float:
-    if entitlement is not None and lot.asset_lot.state == LotState.OPEN:
-        asset_units = units * entitlement  # implied units
-        asset_price = price / entitlement  # implied price
-        lot.asset_lot.record_out(
+        self.asset_lot.close_part(
             units=asset_units,
             price=asset_price,
+            price_currency=price_currency,
             fee=fee,
+            fee_currency=fee_currency,
             dt=dt,
         )
 
-    lot.record_out(
-        units=units,
-        price=price,
-        fee=fee,
-        dt=dt,
-    )
+    @override
+    @classmethod
+    def _ctor_kwargs(
+        cls,
+        kwargs: dict,
+    ) -> dict:
+        return {"share": kwargs["share"]}
 
-    if lot.state == LotState.CLOSED:
-        lot.asset_lot.state = LotState.CLOSED
+    @override
+    def _post_open(
+        self,
+        entitlement: float | None = None,
+    ) -> None:
 
-    cash_in: float = units * price - fee
-    return cash_in
+        if entitlement is None:
+            return
+
+        assert self.lot_record_in is not None
+
+        # implied units
+        asset_units = self.lot_record_in.units * entitlement
+        # implied price
+        asset_price = self.lot_record_in.price / entitlement
+
+        self.asset_lot = AssetLot.open(
+            units=asset_units,
+            price=asset_price,
+            price_currency=self.lot_record_in.price_currency,
+            fee=self.lot_record_in.fee,
+            fee_currency=self.lot_record_in.fee_currency,
+            dt=self.lot_record_in.dt
+        )

@@ -9,7 +9,7 @@ from finanzmaschine.core.market.share import Share
 
 class ShareLot(NominalLot):
     """
-    A nominal lot corresponding to a share-based instrument.
+    A lot corresponding to a share-based instrument.
 
     Units are invariant in share terms: units_open = units_in - units_out_total.
     Each share unit carries an entitlement to an underlying asset.

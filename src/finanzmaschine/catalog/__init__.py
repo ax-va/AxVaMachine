@@ -1,5 +1,4 @@
 from .instrument_registry import registry
 
 # side-effect imports
-from .shares import ethereum
-from .shares import toncoin
+from .shares import bootstrap
